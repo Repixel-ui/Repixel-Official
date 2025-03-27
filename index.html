@@ -28,7 +28,7 @@
             overflow-x: hidden;
         }
         
-        /* Header & Menu */
+        /* Header & Right Side Menu */
         header {
             display: flex;
             justify-content: space-between;
@@ -55,18 +55,18 @@
         .menu {
             position: fixed;
             top: 0;
-            left: -100%;
+            right: -100%; /* Changed from left to right */
             width: 250px;
             height: 100vh;
             background-color: var(--secondary);
             padding: 80px 20px 20px;
             z-index: 100;
-            border-right: 2px solid var(--primary);
-            transition: left 0.3s ease;
+            border-left: 2px solid var(--primary); /* Changed from border-right */
+            transition: right 0.3s ease; /* Changed from left */
         }
         
         .menu.active {
-            left: 0;
+            right: 0; /* Changed from left */
         }
         
         .menu-overlay {
@@ -91,18 +91,119 @@
             padding: 15px;
             margin: 10px 0;
             background-color: rgba(255, 0, 0, 0.2);
-            border-left: 3px solid var(--primary);
+            border-right: 3px solid var(--primary); /* Changed from border-left */
             cursor: pointer;
             border-radius: 4px;
+            text-align: right; /* Align text to right */
         }
         
         .menu-item:hover {
             background-color: rgba(255, 0, 0, 0.4);
-            transform: translateX(5px);
+            transform: translateX(-5px); /* Changed direction from right to left */
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 50px 20px;
+            text-align: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1639762681057-408e52192e55?q=80&w=2232&auto=format&fit=crop') center/cover;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
-        /* Rest of your existing CSS remains the same */
-        /* ... (keep all your existing hero, content-grid, card, button styles) ... */
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: fadeIn 1.5s ease;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            animation: fadeIn 2s ease;
+        }
+        
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 50px 20px;
+        }
+        
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
+        }
+        
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary);
+            color: var(--text);
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: var(--hover);
+            transform: scale(1.1);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background-color: var(--primary);
+            margin-top: 50px;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -122,18 +223,56 @@
         <div class="menu-overlay" id="menuOverlay"></div>
     </header>
     
-    <!-- Rest of your HTML content remains the same -->
-    <!-- ... (keep all your existing hero, content-grid, footer sections) ... -->
-
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to Repixel</h1>
+        <p>We create innovative digital solutions that push boundaries and redefine user experiences. Our team of experts delivers cutting-edge technology with a creative touch.</p>
+        <a href="#" class="btn">Explore Our Work</a>
+    </section>
+    
+    <!-- Content Grid -->
+    <div class="content-grid">
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=2070&auto=format&fit=crop" alt="Design">
+            <div class="card-content">
+                <h3>Creative Design</h3>
+                <p>Our designs blend aesthetics with functionality to create memorable experiences.</p>
+                <a href="#" class="btn">View Portfolio</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070&auto=format&fit=crop" alt="Development">
+            <div class="card-content">
+                <h3>Robust Development</h3>
+                <p>We build scalable solutions using the latest technologies and frameworks.</p>
+                <a href="#" class="btn">Our Technologies</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" alt="Team">
+            <div class="card-content">
+                <h3>Dedicated Team</h3>
+                <p>Our passionate professionals are committed to delivering excellence.</p>
+                <a href="#" class="btn">Meet the Team</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Repixel. All rights reserved.</p>
+    </footer>
+    
     <script>
-        // Improved Menu Toggle
+        // Menu Toggle
         const menuBtn = document.getElementById('menuBtn');
         const menu = document.getElementById('menu');
         const menuOverlay = document.getElementById('menuOverlay');
         
-        // Toggle menu when clicking the three dots
         menuBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent immediate closing
+            e.stopPropagation();
             menu.classList.toggle('active');
             menuOverlay.classList.toggle('active');
         });
@@ -149,7 +288,6 @@
             item.addEventListener('click', () => {
                 menu.classList.remove('active');
                 menuOverlay.classList.remove('active');
-                // Here you would add functionality for each menu item
                 alert(`You clicked: ${item.textContent}`);
             });
         });
