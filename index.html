@@ -41,12 +41,38 @@
             background-size: cover;
             background-position: center;
         }
+        /* Mobile menu styles */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #0F0F0F;
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+        }
+        .mobile-menu.active {
+            display: block;
+        }
+        .mobile-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mobile-menu a:last-child {
+            border-bottom: none;
+        }
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="bg-dark py-4 px-6 sticky top-0 z-50 border-b border-primary/20">
-        <div class="container mx-auto flex justify-between items-center">
+        <div class="container mx-auto flex justify-between items-center relative">
             <div class="flex items-center space-x-2">
                 <div class="w-8 h-8 bg-primary rounded-full"></div>
                 <span class="text-xl font-bold">RePixel</span>
@@ -57,9 +83,17 @@
                 <a href="#download" class="hover:text-primary transition">Download</a>
                 <a href="#contact" class="hover:text-primary transition">Contact</a>
             </div>
-            <button class="md:hidden text-2xl">
+            <button id="mobile-menu-button" class="md:hidden text-2xl">
                 <i class="fas fa-bars"></i>
             </button>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu md:hidden">
+                <a href="#features" class="hover:text-primary transition">Features</a>
+                <a href="#benefits" class="hover:text-primary transition">Benefits</a>
+                <a href="#download" class="hover:text-primary transition">Download</a>
+                <a href="#contact" class="hover:text-primary transition">Contact</a>
+            </div>
         </div>
     </nav>
 
@@ -74,73 +108,73 @@
         </div>
     </section>
 
-<!-- Features Section -->
-<section id="features" class="py-20 px-4">
-    <div class="container mx-auto max-w-6xl">
-        <h2 class="text-3xl font-bold text-center mb-16">About PicaFix</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Feature 1 -->
-            <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
-                <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                    <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png" 
-                         alt="AI Enhancement" 
-                         class="w-full h-full object-cover"
-                         draggable="false">
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-3xl font-bold text-center mb-16">About PicaFix</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
+                    <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png" 
+                             alt="AI Enhancement" 
+                             class="w-full h-full object-cover"
+                             draggable="false">
+                    </div>
+                    <div class="text-primary text-4xl mb-4">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">AI Enhancement</h3>
+                    <p class="text-gray-300">Improve image sharpness and clarity with advanced AI algorithms.</p>
                 </div>
-                <div class="text-primary text-4xl mb-4">
-                    <i class="fas fa-magic"></i>
+                
+                <!-- Feature 2 -->
+                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
+                    <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/colorize.png" 
+                             alt="Colorization" 
+                             class="w-full h-full object-cover"
+                             draggable="false">
+                    </div>
+                    <div class="text-primary text-4xl mb-4">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Colorization</h3>
+                    <p class="text-gray-300">Convert black & white photos into vibrant, lifelike images.</p>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">AI Enhancement</h3>
-                <p class="text-gray-300">Improve image sharpness and clarity with advanced AI algorithms.</p>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
-                <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                    <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/colorize.png" 
-                         alt="Colorization" 
-                         class="w-full h-full object-cover"
-                         draggable="false">
+                
+                <!-- Feature 3 -->
+                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
+                    <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Restore.png" 
+                             alt="Restoration" 
+                             class="w-full h-full object-cover"
+                             draggable="false">
+                    </div>
+                    <div class="text-primary text-4xl mb-4">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Restoration</h3>
+                    <p class="text-gray-300">Fix old, damaged or faded photos to their original glory.</p>
                 </div>
-                <div class="text-primary text-4xl mb-4">
-                    <i class="fas fa-palette"></i>
+                
+                <!-- Feature 4 -->
+                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
+                    <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
+                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png" 
+                             alt="Deblurring" 
+                             class="w-full h-full object-cover"
+                             draggable="false">
+                    </div>
+                    <div class="text-primary text-4xl mb-4">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Deblurring</h3>
+                    <p class="text-gray-300">Remove blurriness and bring out finer details in your images.</p>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Colorization</h3>
-                <p class="text-gray-300">Convert black & white photos into vibrant, lifelike images.</p>
-            </div>
-            
-            <!-- Feature 3 -->
-            <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
-                <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                    <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Restore.png" 
-                         alt="Restoration" 
-                         class="w-full h-full object-cover"
-                         draggable="false">
-                </div>
-                <div class="text-primary text-4xl mb-4">
-                    <i class="fas fa-history"></i>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">Restoration</h3>
-                <p class="text-gray-300">Fix old, damaged or faded photos to their original glory.</p>
-            </div>
-            
-            <!-- Feature 4 -->
-            <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
-                <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                    <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png" 
-                         alt="Deblurring" 
-                         class="w-full h-full object-cover"
-                         draggable="false">
-                </div>
-                <div class="text-primary text-4xl mb-4">
-                    <i class="fas fa-eye"></i>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">Deblurring</h3>
-                <p class="text-gray-300">Remove blurriness and bring out finer details in your images.</p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Benefits Section -->
     <section id="benefits" class="py-20 bg-dark/50 px-4">
@@ -238,8 +272,50 @@
     </footer>
 
     <script>
-        // Mobile menu toggle would go here
-        // Form validation would go here
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Change icon between bars and times
+            const icon = mobileMenuButton.querySelector('i');
+            if (mobileMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Close mobile menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                const icon = mobileMenuButton.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+        
+        // Smooth scrolling for all links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
