@@ -1,337 +1,192 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RePixel | AI-Powered Image Enhancement</title>
-    <meta name="description" content="PicaFix: AI-powered image enhancement, colorization, restoration and deblurring">
+import gradio as gr
+from atelier_generator import AtelierGenerator
+
+client = AtelierGenerator(gradio=True, wm_text="Anime Image Generator! by Repixel")
+
+gr_css = """
+footer {
+    display: none !important;
+}
+.image-frame.svelte-rrgd5g img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+.grid-wrap.svelte-eynlr2.svelte-eynlr2 {
+    overflow-y: auto;
+    height: 100% !important;
+}
+.upload-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.gallery-panel {
+    height: 100%;
+}
+.gallery-container {
+    height: calc(100% - 60px) !important;
+}
+.beta-feature {
+    background: linear-gradient(135deg, #ff000030, #0000ff30);
+    border: 1px solid #ff000050;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.webview-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0F0F0F;
+    z-index: 1000;
+    display: none;
+}
+.webview-header {
+    padding: 15px;
+    background: #0F0F0F;
+    border-bottom: 1px solid #ff000050;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.webview-content {
+    height: calc(100% - 60px);
+    width: 100%;
+}
+"""
+
+gr_thm = gr.themes.Default(
+            primary_hue=gr.themes.colors.rose,
+            secondary_hue=gr.themes.colors.rose,
+            neutral_hue=gr.themes.colors.zinc
+        )
+
+# Initialize a cache dictionary outside the function
+caption_cache = {}
+
+def AnimeGenerator(src, mem, progress=gr.Progress()):
+    progress(0.1, "Preparing image (stage 1 of 3)...")
+    size, _, _ = client.size_checker(src)
+
+    # Check if the caption is already cached
+    if src in caption_cache:      
+        prompt = caption_cache[src]
+    else:
+        progress(0.5, f"Processing {size} image (stage 2 of 3)...")
+        prompt = client.image_caption(src)
+        caption_cache[src] = prompt
+
+    progress(0.8, f"Rendering {size} image (stage 3 of 3)...")
+    # Always use anime-plus style
+    result = client.image_variation(
+        src, 
+        prompt, 
+        image_size=size, 
+        strength=0.33, 
+        lora_flux='anime-plus'
+    )
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#FF0000',
-                        dark: '#0F0F0F',
-                    }
-                }
-            }
-        }
-    </script>
+    if result:
+        mem.insert(0, result)
+        return mem
+    else:
+        gr.Warning('Something went wrong! Please try again.')
+        return mem
+
+with gr.Blocks(analytics_enabled=False, title='Anime Image Generator by repixel', css=gr_css, theme=gr_thm) as demo:
+    gr.Markdown("## <br><center>Anime Image Generator - Transform your images to anime style!")
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    # Beta Features Section
+    with gr.Column(variant="panel", elem_classes="beta-feature"):
+        gr.Markdown("## <center>🚀 Beta Feature Preview")
+        gr.Markdown("""
+        <center>We're testing a new full-screen experience with enhanced capabilities!
+        <br>Try our beta webview interface that includes:
+        <br>- Full-screen image processing
+        <br>- Direct download functionality
+        <br>- Improved gallery selection
+        """)
+        open_webview = gr.Button("Try Beta Version", variant="primary")
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #0F0F0F;
-            color: white;
-        }
-        .hero-bg {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                     url('https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/9c46d3fc4447e56eab87fdc566aa764517714bd2/background_Image.jpg');
+    with gr.Row(equal_height=True):
+        with gr.Column():
+            with gr.Column(variant='panel', elem_classes="upload-panel"):
+                gr.Markdown("## <center>📸 Upload Your Image!")
+                src = gr.Image(type='filepath', label='', height="100%", sources=['upload'])
+                run = gr.Button("Generate Anime Image!", variant='stop')
 
-            background-size: cover;
-            background-position: center;
-        }
-        /* Mobile menu styles */
-        .mobile-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background-color: #0F0F0F;
-            padding: 1rem;
-            border-top: 1px solid rgba(255, 0, 0, 0.2);
-        }
-        .mobile-menu.active {
-            display: block;
-        }
-        .mobile-menu a {
-            display: block;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .mobile-menu a:last-child {
-            border-bottom: none;
-        }
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="bg-dark py-4 px-6 sticky top-0 z-50 border-b border-primary/20">
-        <div class="container mx-auto flex justify-between items-center relative">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-primary rounded-full"></div>
-                <span class="text-xl font-bold">RePixel</span>
-            </div>
-            <div class="hidden md:flex space-x-8">
-                <a href="#features" class="hover:text-primary transition">Features</a>
-                <a href="#benefits" class="hover:text-primary transition">Benefits</a>
-                <a href="#download" class="hover:text-primary transition">Download</a>
-                <a href="#contact" class="hover:text-primary transition">Contact</a>
-                <a href="#donation" class="hover:text-primary transition">Donation</a>
-            </div>
-            <button id="mobile-menu-button" class="md:hidden text-2xl">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="mobile-menu md:hidden">
-                <a href="#features" class="hover:text-primary transition">Features</a>
-                <a href="#benefits" class="hover:text-primary transition">Benefits</a>
-                <a href="#download" class="hover:text-primary transition">Download</a>
-                <a href="#contact" class="hover:text-primary transition">Contact</a>
-                <a href="#donation" class="hover:text-primary transition">Donation</a>
-            </div>
-        </div>
-    </nav>
+        with gr.Column():    
+            with gr.Column(variant='panel', elem_classes="gallery-panel"):
+                gr.Markdown("## <center>🎨 Generated Result")
+                res = gr.Gallery(
+                    label='', 
+                    height="100%",
+                    elem_classes="gallery-container",
+                    preview=True,
+                    columns=1,
+                    object_fit="contain"
+                )
+                mem = gr.State([])
 
-    <!-- Hero Section -->
-    <section class="hero-bg min-h-screen flex items-center justify-center text-center px-4">
-        <div class="max-w-3xl mx-auto">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6">Bringing Your Memories to Life with AI</h1>
-            <p class="text-xl md:text-2xl mb-8">PicaFix: Enhance, Restore, Colorize & Deblur – AI-Powered Perfection</p>
-            <button class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105">
-                Download Now
-            </button>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="py-20 px-4">
-        <div class="container mx-auto max-w-6xl">
-            <h2 class="text-3xl font-bold text-center mb-16">About PicaFix</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Feature 1 -->
-                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
-                    <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png" 
-                             alt="AI Enhancement" 
-                             class="w-full h-full object-cover"
-                             draggable="false">
-                    </div>
-                    <div class="text-primary text-4xl mb-4">
-                        <i class="fas fa-magic"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">AI Enhancement</h3>
-                    <p class="text-gray-300">Improve image sharpness and clarity with advanced AI algorithms.</p>
-                </div>
-                
-                <!-- Feature 2 -->
-                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
-                    <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/colorize.png" 
-                             alt="Colorization" 
-                             class="w-full h-full object-cover"
-                             draggable="false">
-                    </div>
-                    <div class="text-primary text-4xl mb-4">
-                        <i class="fas fa-palette"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Colorization</h3>
-                    <p class="text-gray-300">Convert black & white photos into vibrant, lifelike images.</p>
-                </div>
-                
-                <!-- Feature 3 -->
-                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
-                    <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Restore.png" 
-                             alt="Restoration" 
-                             class="w-full h-full object-cover"
-                             draggable="false">
-                    </div>
-                    <div class="text-primary text-4xl mb-4">
-                        <i class="fas fa-history"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Restoration</h3>
-                    <p class="text-gray-300">Fix old, damaged or faded photos to their original glory.</p>
-                </div>
-                
-                <!-- Feature 4 -->
-                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
-                    <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png" 
-                             alt="Deblurring" 
-                             class="w-full h-full object-cover"
-                             draggable="false">
-                    </div>
-                    <div class="text-primary text-4xl mb-4">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Deblurring</h3>
-                    <p class="text-gray-300">Remove blurriness and bring out finer details in your images.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Benefits Section -->
-    <section id="benefits" class="py-20 bg-dark/50 px-4">
-        <div class="container mx-auto max-w-4xl">
-            <h2 class="text-3xl font-bold text-center mb-12">Why Choose PicaFix?</h2>
-            <div class="space-y-6">
-                <div class="flex items-start">
-                    <div class="text-primary text-xl mr-4 mt-1">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold">100% Free</h3>
-                        <p class="text-gray-300">No cost to use - enhance your photos without spending a dime.</p>
-                    </div>
-                </div>
-                <div class="flex items-start">
-                    <div class="text-primary text-xl mr-4 mt-1">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold">Fast AI Processing</h3>
-                        <p class="text-gray-300">Get professional-quality results in seconds, not hours.</p>
-                    </div>
-                </div>
-                <div class="flex items-start">
-                    <div class="text-primary text-xl mr-4 mt-1">
-                        <i class="fas fa-user-friends"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold">User-Friendly</h3>
-                        <p class="text-gray-300">Simple interface that anyone can use, no technical skills needed.</p>
-                    </div>
-                </div>
-                <div class="flex items-start">
-                    <div class="text-primary text-xl mr-4 mt-1">
-                        <i class="fas fa-images"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold">Works on Any Image</h3>
-                        <p class="text-gray-300">From old family photographs to modern digital shots.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Download Section -->
-     <section id="download" class="py-20 px-4">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-3xl font-bold mb-8">Get PicaFix Today</h2>
-            <p class="text-xl mb-12 max-w-2xl mx-auto">Download our app and start transforming your photos with AI-powered perfection.</p>
-            <div class="flex justify-center">
-                <button class="bg-black text-white px-8 py-4 rounded-lg flex items-center justify-center space-x-3 hover:bg-gray-900 transition">
-                    <i class="fab fa-google-play text-3xl"></i>
-                    <div class="text-left">
-                        <div class="text-xs">Get it on</div>
-                        <div class="text-xl font-semibold">Google Play</div>
-                    </div>
-                </button>
-            </div>
-        </div>
-    </section>
-       <!-- Donation Section -->
-    <section id="donation" class="py-20 px-4 bg-dark">
-        <div class="container mx-auto max-w-4xl text-center">
-            <div class="bg-dark/90 p-8 md:p-12 rounded-xl border border-primary/20">
-                <h2 class="text-3xl font-bold mb-6">Support Our Development</h2>
-                <p class="text-xl mb-6">We're constantly working to improve PicaFix and bring you the best AI-powered image enhancement experience.</p>
-                <p class="text-lg mb-8 text-gray-300">Your support helps us maintain servers, develop new features, and keep PicaFix completely free for everyone!</p>
-                <a href="https://ko-fi.com/repixel" target="_blank" class="inline-block bg-primary hover:bg-red-700 text-white font-bold py-4 px-10 rounded-full text-lg transition-all transform hover:scale-105">
-                    <i class="fas fa-heart mr-2"></i> Support Our Work
-                </a>
-                <p class="mt-4 text-sm text-gray-400">Every contribution helps us improve your experience</p>
-            </div>
-        </div>
-    </section>
-    <!-- Contact Section -->
-        <section id="contact" class="py-20 bg-dark/50 px-4">
-        <div class="container mx-auto max-w-4xl">
-            <h2 class="text-3xl font-bold text-center mb-12">Contact Us</h2>
-            <div class="flex justify-center">
-                <div>
-                    <h3 class="text-xl font-semibold mb-6 text-center">Connect With Us</h3>
-                    <div class="space-y-4">
-                        <a href="https://www.instagram.com/repixelofficial?igsh=djV2aGF6dzVwNjJ2" target="_blank" class="flex items-center space-x-3 hover:text-primary transition">
-                            <i class="fab fa-instagram text-2xl"></i>
-                            <span>@repixelofficial</span>
-                        </a>
-                        <a href="https://youtube.com/@therepixel?feature=shared" target="_blank" class="flex items-center space-x-3 hover:text-primary transition">
-                            <i class="fab fa-youtube text-2xl"></i>
-                            <span>YouTube</span>
-                        </a>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-envelope text-2xl"></i>
-                            <span>repixelofficial@gmail.com</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="py-8 px-4 border-t border-gray-800">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2025 RePixel. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
+    # Webview Section (hidden by default)
+    with gr.Column(visible=False, elem_classes="webview-container") as webview:
+        with gr.Column(elem_classes="webview-header"):
+            gr.Markdown("### Beta Webview Interface")
+            close_webview = gr.Button("Close", variant="stop")
         
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
-            
-            // Change icon between bars and times
-            const icon = mobileMenuButton.querySelector('i');
-            if (mobileMenu.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-        
-        // Close mobile menu when clicking on a link
-        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
-                const icon = mobileMenuButton.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
-        
-        // Smooth scrolling for all links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
+        with gr.Column(elem_classes="webview-content"):
+            with gr.Row():
+                with gr.Column():
+                    webview_src = gr.Image(type='filepath', label='Upload Image', height=500, sources=['upload'])
+                    webview_run = gr.Button("Process Image", variant='primary')
                 
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+                with gr.Column():
+                    webview_res = gr.Gallery(label='Results', height=500)
+                    webview_download = gr.Button("Download Results", variant='secondary')
+                    webview_mem = gr.State([])
+
+    # Event handlers
+    run.click(
+        inputs=[src, mem],
+        outputs=res,
+        fn=AnimeGenerator
+    )
+    
+    webview_run.click(
+        inputs=[webview_src, webview_mem],
+        outputs=webview_res,
+        fn=AnimeGenerator
+    )
+    
+    def toggle_webview():
+        return gr.update(visible=True)
+    
+    def close_webview_fn():
+        return gr.update(visible=False)
+    
+    open_webview.click(
+        fn=toggle_webview,
+        outputs=webview
+    )
+    
+    close_webview.click(
+        fn=close_webview_fn,
+        outputs=webview
+    )
+    
+    # Download functionality
+    def download_images(images):
+        if images:
+            return gr.update(value=images, visible=True)
+        return gr.update(visible=False)
+    
+    webview_download.click(
+        fn=download_images,
+        inputs=webview_res,
+        outputs=gr.File(label="Download Results", visible=False)
+    )
+
+demo.launch(inbrowser=True)
