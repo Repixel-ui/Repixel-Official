@@ -95,10 +95,11 @@
             justify-content: space-between;
             align-items: center;
         }
-        .webview-iframe {
+        gradio-app {
             width: 100%;
             height: calc(100% - 60px);
             border: none;
+            display: block;
         }
         .webview-close {
             background-color: #FF0000;
@@ -335,14 +336,12 @@
 
     <!-- Webview Modal -->
     <div id="webview-modal" class="webview-modal">
-    <div class="webview-header">
-        <h3 class="text-xl font-bold">Anime Style Converter</h3>
-        <button id="close-webview" class="webview-close">Close</button>
+        <div class="webview-header">
+            <h3 class="text-xl font-bold">Anime Style Converter</h3>
+            <button id="close-webview" class="webview-close">Close</button>
+        </div>
+        <gradio-app src="https://pratyyush-animestyleconverter.hf.space"></gradio-app>
     </div>
-    <!-- Gradio Embed -->
-    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.29.0/gradio.js"></script>
-    <gradio-app space="pratyyush/Animestyleconverter" class="webview-iframe"></gradio-app>
-</div>
 
     <!-- Footer -->
     <footer class="py-8 px-4 border-t border-gray-800">
@@ -350,6 +349,9 @@
             <p>&copy; 2025 RePixel. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Gradio Script -->
+    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.29.0/gradio.js"></script>
 
     <script>
         // Mobile menu toggle
@@ -401,14 +403,11 @@
         const openWebviewBtn = document.getElementById('open-webview');
         const closeWebviewBtn = document.getElementById('close-webview');
         const webviewModal = document.getElementById('webview-modal');
-        const webviewIframe = document.getElementById('webview-iframe');
 
         // Open webview
         openWebviewBtn.addEventListener('click', () => {
             webviewModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
-            // Reload the iframe to ensure fresh state
-            webviewIframe.src = "https://pratyyush-animestyleconverter.hf.space";
         });
 
         // Close webview
