@@ -86,7 +86,6 @@
             height: 100%;
             background-color: #0F0F0F;
             z-index: 1000;
-            overflow: auto;
         }
         .webview-header {
             padding: 1rem;
@@ -96,21 +95,19 @@
             justify-content: space-between;
             align-items: center;
         }
-        .webview-content {
-            padding: 2rem;
-            height: calc(100% - 60px);
-        }
-        .webview-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .webview-gallery img {
+        .webview-iframe {
             width: 100%;
-            height: auto;
-            border-radius: 8px;
+            height: calc(100% - 60px);
+            border: none;
+        }
+        .webview-close {
+            background-color: #FF0000;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -158,16 +155,10 @@
     <!-- Beta Features Section -->
     <section id="beta" class="container mx-auto px-4 py-12">
         <div class="beta-section text-center">
-            <h2 class="text-3xl font-bold mb-4">🚀 Try Our Beta Features</h2>
-            <p class="text-lg mb-6">Experience our new full-screen webview with enhanced capabilities:</p>
-            <ul class="text-left max-w-md mx-auto mb-8 space-y-2">
-                <li><i class="fas fa-check-circle text-primary mr-2"></i> Full-screen image processing</li>
-                <li><i class="fas fa-check-circle text-primary mr-2"></i> One-click downloads</li>
-                <li><i class="fas fa-check-circle text-primary mr-2"></i> Improved gallery selection</li>
-                <li><i class="fas fa-check-circle text-primary mr-2"></i> Smoother workflow</li>
-            </ul>
+            <h2 class="text-3xl font-bold mb-4">🚀 Try Our Anime Style Converter</h2>
+            <p class="text-lg mb-6">Experience our new Anime Style Converter directly in your browser:</p>
             <button id="open-webview" class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105">
-                Launch Beta Webview
+                Open Full-Screen Converter
             </button>
         </div>
     </section>
@@ -240,46 +231,116 @@
         </div>
     </section>
 
-    <!-- Rest of your existing sections (Benefits, Download, Donation, Contact) -->
-    <!-- ... -->
+    <!-- Benefits Section -->
+    <section id="benefits" class="py-20 bg-dark/50 px-4">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-3xl font-bold text-center mb-12">Why Choose PicaFix?</h2>
+            <div class="space-y-6">
+                <div class="flex items-start">
+                    <div class="text-primary text-xl mr-4 mt-1">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">100% Free</h3>
+                        <p class="text-gray-300">No cost to use - enhance your photos without spending a dime.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <div class="text-primary text-xl mr-4 mt-1">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Fast AI Processing</h3>
+                        <p class="text-gray-300">Get professional-quality results in seconds, not hours.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <div class="text-primary text-xl mr-4 mt-1">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">User-Friendly</h3>
+                        <p class="text-gray-300">Simple interface that anyone can use, no technical skills needed.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <div class="text-primary text-xl mr-4 mt-1">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold">Works on Any Image</h3>
+                        <p class="text-gray-300">From old family photographs to modern digital shots.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+     <section id="download" class="py-20 px-4">
+        <div class="container mx-auto max-w-4xl text-center">
+            <h2 class="text-3xl font-bold mb-8">Get PicaFix Today</h2>
+            <p class="text-xl mb-12 max-w-2xl mx-auto">Download our app and start transforming your photos with AI-powered perfection.</p>
+            <div class="flex justify-center">
+                <button class="bg-black text-white px-8 py-4 rounded-lg flex items-center justify-center space-x-3 hover:bg-gray-900 transition">
+                    <i class="fab fa-google-play text-3xl"></i>
+                    <div class="text-left">
+                        <div class="text-xs">Get it on</div>
+                        <div class="text-xl font-semibold">Google Play</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+       <!-- Donation Section -->
+    <section id="donation" class="py-20 px-4 bg-dark">
+        <div class="container mx-auto max-w-4xl text-center">
+            <div class="bg-dark/90 p-8 md:p-12 rounded-xl border border-primary/20">
+                <h2 class="text-3xl font-bold mb-6">Support Our Development</h2>
+                <p class="text-xl mb-6">We're constantly working to improve PicaFix and bring you the best AI-powered image enhancement experience.</p>
+                <p class="text-lg mb-8 text-gray-300">Your support helps us maintain servers, develop new features, and keep PicaFix completely free for everyone!</p>
+                <a href="https://ko-fi.com/repixel" target="_blank" class="inline-block bg-primary hover:bg-red-700 text-white font-bold py-4 px-10 rounded-full text-lg transition-all transform hover:scale-105">
+                    <i class="fas fa-heart mr-2"></i> Support Our Work
+                </a>
+                <p class="mt-4 text-sm text-gray-400">Every contribution helps us improve your experience</p>
+            </div>
+        </div>
+    </section>
+    <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-dark/50 px-4">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-3xl font-bold text-center mb-12">Contact Us</h2>
+            <div class="flex justify-center">
+                <div>
+                    <h3 class="text-xl font-semibold mb-6 text-center">Connect With Us</h3>
+                    <div class="space-y-4">
+                        <a href="https://www.instagram.com/repixelofficial?igsh=djV2aGF6dzVwNjJ2" target="_blank" class="flex items-center space-x-3 hover:text-primary transition">
+                            <i class="fab fa-instagram text-2xl"></i>
+                            <span>@repixelofficial</span>
+                        </a>
+                        <a href="https://youtube.com/@therepixel?feature=shared" target="_blank" class="flex items-center space-x-3 hover:text-primary transition">
+                            <i class="fab fa-youtube text-2xl"></i>
+                            <span>YouTube</span>
+                        </a>
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-envelope text-2xl"></i>
+                            <span>repixelofficial@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Webview Modal -->
     <div id="webview-modal" class="webview-modal">
         <div class="webview-header">
-            <h3 class="text-xl font-bold">Beta Webview</h3>
-            <button id="close-webview" class="bg-primary hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            <h3 class="text-xl font-bold">Anime Style Converter</h3>
+            <button id="close-webview" class="webview-close">
                 Close
             </button>
         </div>
-        <div class="webview-content">
-            <div class="max-w-4xl mx-auto">
-                <h2 class="text-2xl font-bold mb-6">Upload and Process Your Images</h2>
-                
-                <div class="bg-dark/50 p-6 rounded-lg border border-gray-800 mb-6">
-                    <input type="file" id="webview-upload" accept="image/*" class="hidden">
-                    <button id="select-image" class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg mb-4">
-                        <i class="fas fa-image mr-2"></i> Select Image
-                    </button>
-                    <div id="selected-image-container" class="hidden mt-4">
-                        <img id="selected-image" src="#" alt="Selected Image" class="max-h-64 rounded-lg">
-                    </div>
-                </div>
-                
-                <button id="process-image" class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg mb-6">
-                    <i class="fas fa-cog mr-2"></i> Process Image
-                </button>
-                
-                <div id="results-section" class="hidden">
-                    <h3 class="text-xl font-bold mb-4">Results</h3>
-                    <div class="webview-gallery" id="results-gallery">
-                        <!-- Results will appear here -->
-                    </div>
-                    <button id="download-all" class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg mt-6">
-                        <i class="fas fa-download mr-2"></i> Download All
-                    </button>
-                </div>
-            </div>
-        </div>
+        <iframe id="webview-iframe" class="webview-iframe" src="https://huggingface.co/spaces/pratyyush/Animestyleconverter" allow="camera; microphone; fullscreen"></iframe>
     </div>
 
     <!-- Footer -->
@@ -339,19 +400,14 @@
         const openWebviewBtn = document.getElementById('open-webview');
         const closeWebviewBtn = document.getElementById('close-webview');
         const webviewModal = document.getElementById('webview-modal');
-        const selectImageBtn = document.getElementById('select-image');
-        const webviewUpload = document.getElementById('webview-upload');
-        const selectedImageContainer = document.getElementById('selected-image-container');
-        const selectedImage = document.getElementById('selected-image');
-        const processImageBtn = document.getElementById('process-image');
-        const resultsSection = document.getElementById('results-section');
-        const resultsGallery = document.getElementById('results-gallery');
-        const downloadAllBtn = document.getElementById('download-all');
+        const webviewIframe = document.getElementById('webview-iframe');
 
         // Open webview
         openWebviewBtn.addEventListener('click', () => {
             webviewModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            // Reload the iframe to ensure fresh state
+            webviewIframe.src = "https://huggingface.co/spaces/pratyyush/Animestyleconverter";
         });
 
         // Close webview
@@ -360,58 +416,12 @@
             document.body.style.overflow = 'auto';
         });
 
-        // Select image
-        selectImageBtn.addEventListener('click', () => {
-            webviewUpload.click();
-        });
-
-        webviewUpload.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedImage.src = e.target.result;
-                    selectedImageContainer.classList.remove('hidden');
-                };
-                reader.readAsDataURL(this.files[0]);
+        // Close when clicking outside content
+        webviewModal.addEventListener('click', (e) => {
+            if (e.target === webviewModal) {
+                webviewModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
             }
-        });
-
-        // Process image (mock functionality)
-        processImageBtn.addEventListener('click', () => {
-            if (!webviewUpload.files[0]) {
-                alert('Please select an image first');
-                return;
-            }
-
-            // Show processing state
-            processImageBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
-            processImageBtn.disabled = true;
-
-            // Simulate processing delay
-            setTimeout(() => {
-                // Add mock results
-                resultsGallery.innerHTML = '';
-                for (let i = 0; i < 3; i++) {
-                    const img = document.createElement('img');
-                    img.src = selectedImage.src;
-                    img.alt = `Processed Image ${i+1}`;
-                    img.classList.add('hover:opacity-80', 'transition');
-                    resultsGallery.appendChild(img);
-                }
-
-                // Show results
-                resultsSection.classList.remove('hidden');
-                
-                // Reset button
-                processImageBtn.innerHTML = '<i class="fas fa-cog mr-2"></i> Process Image';
-                processImageBtn.disabled = false;
-            }, 2000);
-        });
-
-        // Download all images
-        downloadAllBtn.addEventListener('click', () => {
-            alert('Download functionality would be implemented here');
-            // In a real implementation, this would zip and download all images
         });
     </script>
 </body>
