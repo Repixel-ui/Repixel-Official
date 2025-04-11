@@ -90,7 +90,7 @@
             backdrop-filter: blur(5px);
         }
         
-        /* Webview Modal - Improved for Mobile Scrolling */
+        /* Webview Modal - Fully Responsive */
         .webview-modal {
             display: none;
             position: fixed;
@@ -100,8 +100,7 @@
             height: 100%;
             background-color: #0F0F0F;
             z-index: 1000;
-            overflow: hidden;
-            touch-action: none; /* Prevent browser gestures */
+            overflow: auto;
         }
         .webview-header {
             padding: 1rem;
@@ -116,10 +115,9 @@
         }
         .gradio-container {
             width: 100%;
-            height: calc(100vh - 60px);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            overscroll-behavior: contain; /* Prevent pull-to-refresh */
+            min-height: calc(100vh - 60px);
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
         }
         gradio-app {
             width: 100%;
@@ -325,7 +323,7 @@
     </section>
 
     <!-- Download Section -->
-     <section id="download" class="py-20 px-4">
+    <section id="download" class="py-20 px-4">
         <div class="container mx-auto max-w-4xl text-center">
             <h2 class="text-3xl font-bold mb-8">Get PicaFix Today</h2>
             <p class="text-xl mb-12 max-w-2xl mx-auto">Download our app and start transforming your photos with AI-powered perfection.</p>
@@ -340,7 +338,8 @@
             </div>
         </div>
     </section>
-       <!-- Donation Section -->
+
+    <!-- Donation Section -->
     <section id="donation" class="py-20 px-4 bg-dark">
         <div class="container mx-auto max-w-4xl text-center">
             <div class="bg-dark/90 p-8 md:p-12 rounded-xl border border-primary/20">
@@ -354,8 +353,9 @@
             </div>
         </div>
     </section>
+
     <!-- Contact Section -->
-        <section id="contact" class="py-20 bg-dark/50 px-4">
+    <section id="contact" class="py-20 bg-dark/50 px-4">
         <div class="container mx-auto max-w-4xl">
             <h2 class="text-3xl font-bold text-center mb-12">Contact Us</h2>
             <div class="flex justify-center">
@@ -380,7 +380,7 @@
         </div>
     </section>
 
-    <!-- Webview Modal - Updated Structure -->
+    <!-- Webview Modal - Updated for Auto-Sizing -->
     <div id="webview-modal" class="webview-modal">
         <div class="webview-header">
             <h3 class="text-xl font-bold">Anime Style Converter</h3>
@@ -447,7 +447,7 @@
             });
         });
 
-        // Webview functionality with improved mobile handling
+        // Webview functionality with automatic sizing
         const openWebviewBtn = document.getElementById('open-webview');
         const closeWebviewBtn = document.getElementById('close-webview');
         const webviewModal = document.getElementById('webview-modal');
@@ -461,15 +461,15 @@
             // Reset scroll position
             gradioContainer.scrollTop = 0;
             
-            // Prevent touch events from bubbling (helps with iOS scrolling)
-            gradioContainer.addEventListener('touchmove', preventParentScroll, { passive: false });
+            // Listen for Gradio's resize events
+            window.addEventListener('message', handleGradioMessage);
         });
 
         // Close webview
         closeWebviewBtn.addEventListener('click', () => {
             webviewModal.style.display = 'none';
             document.body.style.overflow = 'auto';
-            gradioContainer.removeEventListener('touchmove', preventParentScroll);
+            window.removeEventListener('message', handleGradioMessage);
         });
 
         // Close when clicking outside content
@@ -477,26 +477,29 @@
             if (e.target === webviewModal) {
                 webviewModal.style.display = 'none';
                 document.body.style.overflow = 'auto';
-                gradioContainer.removeEventListener('touchmove', preventParentScroll);
+                window.removeEventListener('message', handleGradioMessage);
             }
         });
 
-        // Prevent parent scrolling when at scroll boundaries
-        function preventParentScroll(e) {
-            const isScrollingUp = e.deltaY < 0;
-            const isScrollingDown = e.deltaY > 0;
-            
-            // Check if we're at the top and scrolling up
-            if (gradioContainer.scrollTop <= 0 && isScrollingUp) {
-                e.preventDefault();
-            }
-            
-            // Check if we're at the bottom and scrolling down
-            const bottomReached = gradioContainer.scrollHeight - gradioContainer.clientHeight <= gradioContainer.scrollTop + 1;
-            if (bottomReached && isScrollingDown) {
-                e.preventDefault();
+        // Handle messages from Gradio iframe
+        function handleGradioMessage(event) {
+            if (event.data && event.data.type === 'gradio:resize') {
+                // The Gradio interface will automatically adjust its size
+                // We just need to ensure our container allows it to expand
+                gradioContainer.style.minHeight = 'auto';
+                gradioContainer.style.height = 'auto';
             }
         }
+
+        // Ensure the Gradio iframe loads properly
+        document.addEventListener('DOMContentLoaded', () => {
+            const gradioApp = document.querySelector('gradio-app');
+            if (gradioApp) {
+                gradioApp.style.width = '100%';
+                gradioApp.style.height = '100%';
+                gradioApp.style.minHeight = '600px'; // Minimum height to prevent collapse
+            }
+        });
     </script>
 </body>
 </html>
