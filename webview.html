@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RePixel - Anime Style Converter</title>
+
+    <!-- Tailwind CSS (Optional, if you want to style the header/page) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+     <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF0000', // Match primary color
+                        dark: '#0F0F0F',    // Match dark background
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts (Optional, for consistency) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Prevent body scrolling */
+            background-color: #0F0F0F; /* Match dark background */
+            font-family: 'Poppins', sans-serif; /* Match font */
+            color: white;
+        }
+
+        /* Optional Header Styling */
+        .webview-header {
+            background-color: #0F0F0F;
+            padding: 1rem 1.5rem; /* Adjust padding as needed */
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+            height: 60px; /* Example fixed height */
+            display: flex;
+            align-items: center;
+            position: sticky; /* Make header stick */
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Container for the Gradio App */
+        .gradio-container {
+            width: 100%;
+            /* Calculate height to fill remaining viewport below header */
+            height: calc(100vh - 60px); /* Adjust 60px if header height changes */
+            overflow-y: auto; /* Allow scrolling ONLY within this container */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            overscroll-behavior: contain; /* Prevent pull-to-refresh/body scroll */
+        }
+
+        /* Style the Gradio web component */
+        gradio-app {
+            display: block; /* Ensure it behaves like a block element */
+            width: 100%;
+            min-height: 100%; /* Make it fill the container height */
+            border: none;
+        }
+
+        /* Custom Scrollbar for the container */
+        .gradio-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .gradio-container::-webkit-scrollbar-track {
+            background: #1f1f1f; /* Slightly different track for contrast */
+        }
+        .gradio-container::-webkit-scrollbar-thumb {
+            background: #FF0000;
+            border-radius: 4px;
+        }
+        .gradio-container::-webkit-scrollbar-thumb:hover {
+            background: #cc0000;
+        }
+    </style>
+
+    <!-- Gradio Script - Essential for this page -->
+    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.29.0/gradio.js"></script>
+
+</head>
+<body>
+
+    <!-- Optional Header -->
+    <div class="webview-header">
+        <h1 class="text-xl font-semibold">Anime Style Converter (Beta)</h1>
+        {/* You could add a back button here if desired, though closing the tab is standard */}
+    </div>
+
+    <!-- Gradio App Container -->
+    <div class="gradio-container">
+        <gradio-app src="https://pratyyush-animestyleconverter.hf.space"></gradio-app>
+    </div>
+
+</body>
+</html>
