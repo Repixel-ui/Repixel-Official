@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RePixel | AI-Powered Image Enhancement</title>
     <meta name="description" content="PicaFix: AI-powered image enhancement, colorization, restoration and deblurring">
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,15 +20,15 @@
             }
         }
     </script>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -37,14 +37,17 @@
             margin: 0;
             padding: 0;
         }
+        body.modal-open { /* Prevent body scroll when modal is open */
+            overflow: hidden;
+        }
         .hero-bg {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
                      url('https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/9c46d3fc4447e56eab87fdc566aa764517714bd2/background_Image.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
-        
+
         /* Mobile menu styles */
         .mobile-menu {
             display: none;
@@ -73,12 +76,12 @@
         .mobile-menu a:last-child {
             border-bottom: none;
         }
-        
+
         /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
         }
-        
+
         /* Beta Features */
         .beta-section {
             background: linear-gradient(135deg, rgba(255, 0, 0, 0.1), rgba(0, 0, 255, 0.1));
@@ -89,44 +92,51 @@
             max-width: 800px;
             backdrop-filter: blur(5px);
         }
-        
-        /* Webview Modal - Improved for Mobile Scrolling */
+
+        /* --- MODIFIED MODAL & CONTAINER STYLES --- */
         .webview-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 100%; /* Use 100% instead of 100vh for the fixed container */
             background-color: #0F0F0F;
             z-index: 1000;
-            overflow: hidden;
-            touch-action: none; /* Prevent browser gestures */
+            overflow: hidden; /* Crucial: Prevent the modal itself from scrolling */
+            /* touch-action: none; /* Removed for now, overscroll-behavior should handle */
         }
         .webview-header {
             padding: 1rem;
+            height: 60px; /* Define explicit height */
             background-color: #0F0F0F;
             border-bottom: 1px solid rgba(255, 0, 0, 0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
+            position: sticky; /* Keep header visible */
             top: 0;
             z-index: 10;
+            box-sizing: border-box;
         }
         .gradio-container {
             width: 100%;
-            height: calc(100vh - 60px);
-            overflow-y: auto;
+            /* Use dvh for dynamic viewport height, subtract header height */
+            height: calc(100dvh - 60px);
+            overflow-y: auto; /* Allow vertical scrolling ONLY within this container */
             -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            overscroll-behavior: contain; /* Prevent pull-to-refresh */
+            overscroll-behavior: contain; /* Prevent pull-to-refresh and body scroll */
+            box-sizing: border-box;
         }
         gradio-app {
+            display: block; /* Make it block-level */
             width: 100%;
-            min-height: 100%;
+            height: 100%;   /* Make it fill the container height exactly */
             border: none;
-            display: block;
+            box-sizing: border-box; /* Include padding/border in height */
         }
+        /* --- END MODIFIED STYLES --- */
+
         .webview-close {
             background-color: #FF0000;
             color: white;
@@ -141,10 +151,11 @@
             background-color: #cc0000;
             transform: scale(1.05);
         }
-        
-        /* Custom Scrollbar */
+
+        /* Custom Scrollbar (applied to elements with scrollbars, including .gradio-container) */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px; /* Add height for horizontal scrollbars if needed */
         }
         ::-webkit-scrollbar-track {
             background: #0F0F0F;
@@ -177,14 +188,15 @@
             <button id="mobile-menu-button" class="md:hidden text-2xl">
                 <i class="fas fa-bars"></i>
             </button>
-            
+
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu md:hidden">
-                <a href="#features" class="hover:text-primary transition">Features</a>
-                <a href="#benefits" class="hover:text-primary transition">Benefits</a>
-                <a href="#download" class="hover:text-primary transition">Download</a>
-                <a href="#contact" class="hover:text-primary transition">Contact</a>
-                <a href="#donation" class="hover:text-primary transition">Donation</a>
+                 <a href="#features" class="hover:text-primary transition mobile-link">Features</a>
+                 <a href="#benefits" class="hover:text-primary transition mobile-link">Benefits</a>
+                 <a href="#download" class="hover:text-primary transition mobile-link">Download</a>
+                 <a href="#contact" class="hover:text-primary transition mobile-link">Contact</a>
+                 <a href="#donation" class="hover:text-primary transition mobile-link">Donation</a>
+                 <a href="#beta" class="hover:text-primary transition mobile-link">Beta Features</a> {/* Added beta link */}
             </div>
         </div>
     </nav>
@@ -194,9 +206,9 @@
         <div class="max-w-3xl mx-auto">
             <h1 class="text-4xl md:text-6xl font-bold mb-6">Bringing Your Memories to Life with AI</h1>
             <p class="text-xl md:text-2xl mb-8">PicaFix: Enhance, Restore, Colorize & Deblur – AI-Powered Perfection</p>
-            <button class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105">
+            <a href="#download" class="bg-primary hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 inline-block">
                 Download Now
-            </button>
+            </a>
         </div>
     </section>
 
@@ -216,11 +228,11 @@
         <div class="container mx-auto max-w-6xl">
             <h2 class="text-3xl font-bold text-center mb-16">About PicaFix</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Feature 1 -->
-                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
+                {/* Feature Cards */}
+                 <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
                     <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png" 
-                             alt="AI Enhancement" 
+                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png"
+                             alt="AI Enhancement"
                              class="w-full h-full object-cover"
                              draggable="false">
                     </div>
@@ -230,12 +242,10 @@
                     <h3 class="text-xl font-semibold mb-2">AI Enhancement</h3>
                     <p class="text-gray-300">Improve image sharpness and clarity with advanced AI algorithms.</p>
                 </div>
-                
-                <!-- Feature 2 -->
                 <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
                     <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/colorize.png" 
-                             alt="Colorization" 
+                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/colorize.png"
+                             alt="Colorization"
                              class="w-full h-full object-cover"
                              draggable="false">
                     </div>
@@ -245,12 +255,10 @@
                     <h3 class="text-xl font-semibold mb-2">Colorization</h3>
                     <p class="text-gray-300">Convert black & white photos into vibrant, lifelike images.</p>
                 </div>
-                
-                <!-- Feature 3 -->
-                <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
+                 <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
                     <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Restore.png" 
-                             alt="Restoration" 
+                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Restore.png"
+                             alt="Restoration"
                              class="w-full h-full object-cover"
                              draggable="false">
                     </div>
@@ -260,12 +268,10 @@
                     <h3 class="text-xl font-semibold mb-2">Restoration</h3>
                     <p class="text-gray-300">Fix old, damaged or faded photos to their original glory.</p>
                 </div>
-                
-                <!-- Feature 4 -->
                 <div class="bg-dark/50 p-6 rounded-xl border border-gray-800 hover:border-primary/50 transition-all">
                     <div class="w-full h-40 mb-4 rounded-lg overflow-hidden">
-                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png" 
-                             alt="Deblurring" 
+                        <img src="https://raw.githubusercontent.com/Repixel-ui/Repixel-Official/main/Deblur.png"
+                             alt="Deblurring"
                              class="w-full h-full object-cover"
                              draggable="false">
                     </div>
@@ -284,41 +290,22 @@
         <div class="container mx-auto max-w-4xl">
             <h2 class="text-3xl font-bold text-center mb-12">Why Choose PicaFix?</h2>
             <div class="space-y-6">
+                {/* Benefit Items */}
                 <div class="flex items-start">
-                    <div class="text-primary text-xl mr-4 mt-1">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold">100% Free</h3>
-                        <p class="text-gray-300">No cost to use - enhance your photos without spending a dime.</p>
-                    </div>
+                    <div class="text-primary text-xl mr-4 mt-1"> <i class="fas fa-check-circle"></i> </div>
+                    <div> <h3 class="text-xl font-semibold">100% Free</h3> <p class="text-gray-300">No cost to use - enhance your photos without spending a dime.</p> </div>
                 </div>
                 <div class="flex items-start">
-                    <div class="text-primary text-xl mr-4 mt-1">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold">Fast AI Processing</h3>
-                        <p class="text-gray-300">Get professional-quality results in seconds, not hours.</p>
-                    </div>
+                    <div class="text-primary text-xl mr-4 mt-1"> <i class="fas fa-bolt"></i> </div>
+                    <div> <h3 class="text-xl font-semibold">Fast AI Processing</h3> <p class="text-gray-300">Get professional-quality results in seconds, not hours.</p> </div>
                 </div>
                 <div class="flex items-start">
-                    <div class="text-primary text-xl mr-4 mt-1">
-                        <i class="fas fa-user-friends"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold">User-Friendly</h3>
-                        <p class="text-gray-300">Simple interface that anyone can use, no technical skills needed.</p>
-                    </div>
+                    <div class="text-primary text-xl mr-4 mt-1"> <i class="fas fa-user-friends"></i> </div>
+                    <div> <h3 class="text-xl font-semibold">User-Friendly</h3> <p class="text-gray-300">Simple interface that anyone can use, no technical skills needed.</p> </div>
                 </div>
                 <div class="flex items-start">
-                    <div class="text-primary text-xl mr-4 mt-1">
-                        <i class="fas fa-images"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold">Works on Any Image</h3>
-                        <p class="text-gray-300">From old family photographs to modern digital shots.</p>
-                    </div>
+                    <div class="text-primary text-xl mr-4 mt-1"> <i class="fas fa-images"></i> </div>
+                    <div> <h3 class="text-xl font-semibold">Works on Any Image</h3> <p class="text-gray-300">From old family photographs to modern digital shots.</p> </div>
                 </div>
             </div>
         </div>
@@ -330,13 +317,13 @@
             <h2 class="text-3xl font-bold mb-8">Get PicaFix Today</h2>
             <p class="text-xl mb-12 max-w-2xl mx-auto">Download our app and start transforming your photos with AI-powered perfection.</p>
             <div class="flex justify-center">
-                <button class="bg-black text-white px-8 py-4 rounded-lg flex items-center justify-center space-x-3 hover:bg-gray-900 transition">
+                 <a href="#" target="_blank" rel="noopener noreferrer" class="bg-black text-white px-8 py-4 rounded-lg flex items-center justify-center space-x-3 hover:bg-gray-900 transition no-underline">
                     <i class="fab fa-google-play text-3xl"></i>
                     <div class="text-left">
                         <div class="text-xs">Get it on</div>
                         <div class="text-xl font-semibold">Google Play</div>
                     </div>
-                </button>
+                </a>
             </div>
         </div>
     </section>
@@ -355,7 +342,7 @@
         </div>
     </section>
     <!-- Contact Section -->
-        <section id="contact" class="py-20 bg-dark/50 px-4">
+    <section id="contact" class="py-20 bg-dark/50 px-4">
         <div class="container mx-auto max-w-4xl">
             <h2 class="text-3xl font-bold text-center mb-12">Contact Us</h2>
             <div class="flex justify-center">
@@ -380,7 +367,7 @@
         </div>
     </section>
 
-    <!-- Webview Modal - Updated Structure -->
+    <!-- Webview Modal - Structure remains the same -->
     <div id="webview-modal" class="webview-modal">
         <div class="webview-header">
             <h3 class="text-xl font-bold">Anime Style Converter</h3>
@@ -394,7 +381,7 @@
     <!-- Footer -->
     <footer class="py-8 px-4 border-t border-gray-800">
         <div class="container mx-auto text-center">
-            <p>&copy; 2025 RePixel. All rights reserved.</p>
+            <p>© 2025 RePixel. All rights reserved.</p>
         </div>
     </footer>
 
@@ -405,98 +392,75 @@
         // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
-        
+
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('active');
-            
-            // Change icon between bars and times
             const icon = mobileMenuButton.querySelector('i');
-            if (mobileMenu.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
         });
-        
-        // Close mobile menu when clicking on a link
-        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+
+        // Close mobile menu when clicking on a link within the menu
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a.mobile-link');
         mobileMenuLinks.forEach(link => {
             link.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
-                const icon = mobileMenuButton.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            });
-        });
-        
-        // Smooth scrolling for all links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                if (link.getAttribute('href').startsWith('#')) {
+                    mobileMenu.classList.remove('active');
+                    const icon = mobileMenuButton.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
                 }
             });
         });
 
-        // Webview functionality with improved mobile handling
+        // Smooth scrolling for internal anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId !== "#" && document.querySelector(targetId)) {
+                    e.preventDefault();
+                    const targetElement = document.querySelector(targetId);
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Webview functionality
         const openWebviewBtn = document.getElementById('open-webview');
         const closeWebviewBtn = document.getElementById('close-webview');
         const webviewModal = document.getElementById('webview-modal');
         const gradioContainer = document.querySelector('.gradio-container');
+        const body = document.body;
 
         // Open webview
         openWebviewBtn.addEventListener('click', () => {
             webviewModal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            
-            // Reset scroll position
-            gradioContainer.scrollTop = 0;
-            
-            // Prevent touch events from bubbling (helps with iOS scrolling)
-            gradioContainer.addEventListener('touchmove', preventParentScroll, { passive: false });
+            body.classList.add('modal-open'); // Add class to prevent body scroll
+            gradioContainer.scrollTop = 0; // Reset scroll position
+            // Note: Removed preventParentScroll function and listener attachment
+            // Relying on overscroll-behavior: contain and modal overflow: hidden
         });
 
         // Close webview
-        closeWebviewBtn.addEventListener('click', () => {
+        function closeWebview() {
             webviewModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            gradioContainer.removeEventListener('touchmove', preventParentScroll);
-        });
-
-        // Close when clicking outside content
-        webviewModal.addEventListener('click', (e) => {
-            if (e.target === webviewModal) {
-                webviewModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-                gradioContainer.removeEventListener('touchmove', preventParentScroll);
-            }
-        });
-
-        // Prevent parent scrolling when at scroll boundaries
-        function preventParentScroll(e) {
-            const isScrollingUp = e.deltaY < 0;
-            const isScrollingDown = e.deltaY > 0;
-            
-            // Check if we're at the top and scrolling up
-            if (gradioContainer.scrollTop <= 0 && isScrollingUp) {
-                e.preventDefault();
-            }
-            
-            // Check if we're at the bottom and scrolling down
-            const bottomReached = gradioContainer.scrollHeight - gradioContainer.clientHeight <= gradioContainer.scrollTop + 1;
-            if (bottomReached && isScrollingDown) {
-                e.preventDefault();
-            }
+            body.classList.remove('modal-open'); // Remove class to allow body scroll
         }
+
+        closeWebviewBtn.addEventListener('click', closeWebview);
+
+        // Close when clicking outside the content *area* (header + container)
+        // This is slightly tricky as clicking the container itself shouldn't close it.
+        webviewModal.addEventListener('click', (e) => {
+             // Check if the click is directly on the modal backdrop, not its children
+             if (e.target === webviewModal) {
+                 closeWebview();
+             }
+        });
+
+        // Removed the preventParentScroll function as `overscroll-behavior: contain`
+        // on the .gradio-container should handle preventing scroll chaining more effectively.
+
     </script>
 </body>
 </html>
